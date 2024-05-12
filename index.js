@@ -29,6 +29,13 @@ async function run() {
 
     const servicesCollection = client.db("fixitFix").collection("services");
 
+    app.get("/services", async (req, res) => {
+      const query = {};
+      const cursor = servicesCollection.find(query);
+      const services = await cursor.toArray();
+      res.send(services);
+    })
+
     app.post("/service", async (req, res) => {
       const service = req.body;
       const result = await servicesCollection.insertOne(service);
