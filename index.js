@@ -6,16 +6,8 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 //middlewares--------
-app.use(
-  cors({
-    origin: ["http://localhost:5173"],
-  })
-);
-
-//fixitFix
-//6Mucounk6ddTVW81
-
-
+app.use(cors());
+app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.hjxwn6k.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -34,6 +26,15 @@ async function run() {
     // await client.connect();
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
+
+    const servicesCollection = client.db("fixitFix").collection("services");
+
+    app.post("/service", async (req, res) => {
+      const service = req.body;
+      const result = await servicesCollection.insertOne(service);
+      console.log(result);
+      res.send(result);
+    })
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
