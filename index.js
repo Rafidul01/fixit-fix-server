@@ -28,6 +28,7 @@ async function run() {
     // await client.db("admin").command({ ping: 1 });
 
     const servicesCollection = client.db("fixitFix").collection("services");
+    const bookedCollection = client.db("fixitFix").collection("booked");
     app.get("/services", async (req, res) => {
       const filter = req?.query?.sort;
       const search = req?.query?.search;
@@ -74,6 +75,12 @@ async function run() {
     app.post("/service", async (req, res) => {
       const service = req.body;
       const result = await servicesCollection.insertOne(service);
+      console.log(result);
+      res.send(result);
+    })
+    app.post("/booked", async (req, res) => {
+      const booked = req.body;
+      const result = await bookedCollection.insertOne(booked);
       console.log(result);
       res.send(result);
     })
