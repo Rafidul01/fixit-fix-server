@@ -52,6 +52,17 @@ async function run() {
       const services = await cursor.toArray();
       res.send(services);
     })
+
+    app.get("/service/manage/:email", async (req,res) => {
+      const email = req.params.email;
+      console.log(email);
+      const query = { 
+        userEmail: email
+       };
+      const cursor = servicesCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    })
     app.get("/services/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -62,7 +73,7 @@ async function run() {
     app.patch("/service/:id", async (req, res) => {
       const id = req.params.id;
       const views = req?.query?.views;
-      console.log(views);
+      // console.log(views);
       const query = { _id: new ObjectId(id) };
       const updateDoc = {
         $set: {
@@ -75,15 +86,25 @@ async function run() {
     app.post("/service", async (req, res) => {
       const service = req.body;
       const result = await servicesCollection.insertOne(service);
-      console.log(result);
+      // console.log(result);
       res.send(result);
     })
     app.post("/booked", async (req, res) => {
       const booked = req.body;
       const result = await bookedCollection.insertOne(booked);
-      console.log(result);
+      // console.log(result);
       res.send(result);
     })
+    app.patch("/service/booked/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $inc: { booked: 1 },
+      };
+      const result = await servicesCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
