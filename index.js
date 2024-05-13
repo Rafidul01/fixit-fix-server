@@ -41,6 +41,20 @@ async function run() {
       const service = await servicesCollection.findOne(query);
       res.send(service);
     })
+
+    app.patch("/service/:id", async (req, res) => {
+      const id = req.params.id;
+      const views = req?.query?.views;
+      console.log(views);
+      const query = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          views
+        },
+      };
+      const result = await servicesCollection.updateOne(query, updateDoc);
+      res.send(result);
+    })
     app.post("/service", async (req, res) => {
       const service = req.body;
       const result = await servicesCollection.insertOne(service);
