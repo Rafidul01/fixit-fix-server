@@ -29,17 +29,23 @@ async function run() {
 
     const servicesCollection = client.db("fixitFix").collection("services");
     app.get("/services", async (req, res) => {
-      const filter = req.query.sort;
-      console.log(filter);
+      const filter = req?.query?.sort;
+      const search = req?.query?.search;
+      console.log(filter,search);
       const query = {};
       let sort = {};
-      
       if(filter === "views") {
         sort = { views: -1 };
       }
       if(filter === "booked") {
         sort = { booked: -1 };
       }
+      if (search) {
+        query.name = {
+          $regex: search,
+          $options: "i"
+        };
+      } 
       
       const cursor = servicesCollection.find(query).sort(sort);
       const services = await cursor.toArray();
