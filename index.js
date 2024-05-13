@@ -28,10 +28,20 @@ async function run() {
     // await client.db("admin").command({ ping: 1 });
 
     const servicesCollection = client.db("fixitFix").collection("services");
-
     app.get("/services", async (req, res) => {
+      const filter = req.query.sort;
+      console.log(filter);
       const query = {};
-      const cursor = servicesCollection.find(query);
+      let sort = {};
+      
+      if(filter === "views") {
+        sort = { views: -1 };
+      }
+      if(filter === "booked") {
+        sort = { booked: -1 };
+      }
+      
+      const cursor = servicesCollection.find(query).sort(sort);
       const services = await cursor.toArray();
       res.send(services);
     })
