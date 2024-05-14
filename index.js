@@ -10,7 +10,13 @@ const cookieParser = require("cookie-parser");
 //middlewares--------
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: [
+      "http://localhost:5173",
+      "https://fixit-fix.web.app",
+      "https://fixit-fix.firebaseapp.com"
+
+
+    ],
     credentials: true, // it is very important for send cookie to client
   })
 );
@@ -76,7 +82,7 @@ async function run() {
 
     const servicesCollection = client.db("fixitFix").collection("services");
     const bookedCollection = client.db("fixitFix").collection("booked");
-    app.get("/services", logger, verifyToken,  async (req, res) => {
+    app.get("/services",  async (req, res) => {
       const filter = req?.query?.sort;
       const search = req?.query?.search;
       console.log(filter,search);
@@ -100,7 +106,7 @@ async function run() {
       res.send(services);
     })
 
-    app.get("/service/manage/:email", async (req,res) => {
+    app.get("/service/manage/:email",logger , verifyToken, async (req,res) => {
       const email = req.params.email;
       console.log(email);
       const query = { 
@@ -110,7 +116,7 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     })
-    app.get("/service/booked/:email", async (req,res) => {
+    app.get("/service/booked/:email",logger , verifyToken, async (req,res) => {
       const email = req.params.email;
       console.log(email);
       const query = { 
@@ -120,7 +126,7 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     })
-    app.get("/service/toDo/:email", async (req,res) => {
+    app.get("/service/toDo/:email",logger , verifyToken, async (req,res) => {
       const email = req.params.email;
       console.log(email);
       const query = { 
@@ -130,7 +136,7 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     })
-    app.get("/services/:id", async (req, res) => {
+    app.get("/services/:id",logger,verifyToken,  async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const service = await servicesCollection.findOne(query);
