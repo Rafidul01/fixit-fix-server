@@ -63,6 +63,16 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     })
+    app.get("/service/booked/:email", async (req,res) => {
+      const email = req.params.email;
+      console.log(email);
+      const query = { 
+        purchaseEmail: email
+       };
+      const cursor = bookedCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    })
     app.get("/services/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
