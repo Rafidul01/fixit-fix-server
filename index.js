@@ -90,6 +90,19 @@ async function run() {
       res.send(service);
     })
 
+    app.patch("/service/status/:id", async (req, res) => {
+      const id = req.params.id;
+      const status = req.query?.status;
+      console.log(status);
+      const query = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          status
+        },
+      };
+      const result = await bookedCollection.updateOne(query, updateDoc);
+      res.send(result);
+    })
     app.patch("/service/:id", async (req, res) => {
       const id = req.params.id;
       const views = req?.query?.views;
