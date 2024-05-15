@@ -11,7 +11,7 @@ const cookieParser = require("cookie-parser");
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
+      // "http://localhost:5173",
       "https://fixit-fix.web.app",
       "https://fixit-fix.firebaseapp.com"
 
@@ -61,6 +61,11 @@ async function run() {
     // await client.connect();
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    };
 
     app.post("/jwt", logger, async (req, res) => {
       const user = req.body;
@@ -71,12 +76,15 @@ async function run() {
       });
 
       // send cookie to client by http only
+      res.cookie("token", token, cookieOptions).send({ success: true });
+    });
+
+    //logout 
+    app.post("/logout", async (req, res) => {
+      const user = req.body;
+      console.log("logging out", user);
       res
-        .cookie("token", token, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "none",
-        })
+        .clearCookie("token", { ...cookieOptions, maxAge: 0 })
         .send({ success: true });
     });
 
