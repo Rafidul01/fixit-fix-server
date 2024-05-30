@@ -11,7 +11,7 @@ const cookieParser = require("cookie-parser");
 app.use(
   cors({
     origin: [
-      // "http://localhost:5173",
+      "http://localhost:5173",
       "https://fixit-fix.web.app",
       "https://fixit-fix.firebaseapp.com"
 
@@ -101,6 +101,9 @@ async function run() {
       }
       if(filter === "booked") {
         sort = { booked: -1 };
+      }
+      if(filter === "rating") {
+        sort = { ratingCount: -1 };
       }
       if (search) {
         query.name = {
@@ -210,6 +213,35 @@ async function run() {
         $set: updateService,
       };
       const result = await servicesCollection.updateOne(filter,service,);
+      res.send(result);
+    });
+    // app.put("/service/ratings/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const rating = req?.query?.rating;
+    //   console.log(id, rating);
+    //   // console.log(id);
+    //   const filter = { _id: new ObjectId(id) };
+    //   const options = { upsert: true };
+    //   const service = {
+    //     $set: {
+    //       rating
+    //     },
+    //   };
+    //   const result = await servicesCollection.updateOne(filter,service,options);
+    //   res.send(result);
+    // });
+
+    app.patch("/service/ratings/:id", async (req, res) => {
+      const id = req.params.id;
+      const rating = req?.query?.rating;
+      const avRating = req?.query?.avRating;
+      console.log(id, rating);
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $inc: { ratingCount: 1, rating: parseInt(rating) },
+        $set: { avRating: parseInt(avRating)},
+      };
+      const result = await servicesCollection.updateOne(filter, updateDoc);
       res.send(result);
     });
 
